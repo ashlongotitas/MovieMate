@@ -36,6 +36,22 @@ typedef struct {
     int is_favorite; // 1 si es favorita, 0 si no
 } Show;
 
+// Funcion para comparar si dos claves (strings) son iguales
+int is_equal_str(void *key1, void *key2) {
+    if (strcmp((char *)key1, (char *)key2) == 0) {
+        return 1;
+    }
+    return 0;
+}
+
+// Funcion para convertir un string a minusculas
+void lower_case_str(char *str) {
+    if (str == NULL) return;
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
 const char *get_csv_field(char *linea, int indice) {
     // Si la linea es NULL, strtok continua en la cadena anterior
     char *token = strtok(linea, ",");
@@ -92,9 +108,13 @@ void cargarShows(Map *showMap) {
         nuevoShow->user_rating = 0;      // Sin calificacion al inicio
         nuevoShow->comments = list_create(); // Creamos una lista vacia para futuros comentarios
         nuevoShow->is_favorite = 0;    // No es favorito al inicio
-
-        // Insertar en el mapa usando el titulo como clave
-        map_insert(showMap, nuevoShow->title, nuevoShow);
+        
+        char *tituloClave = strdup(nuevoShow->title);
+        if (tituloClave != NULL) {
+            lower_case_str(tituloClave); // Convertimos la clave a minusculas
+        // Usamos la clave en minusculas para insertar en el mapa
+            map_insert(showMap, tituloClave, nuevoShow); 
+        }
         contador++;
         
         // Liberamos la memoria de la linea copiada
@@ -119,6 +139,30 @@ void mostrarDetallesShow(Show *show) {
     printf("----------------------------------------\n");
 }
 
+void buscarShowPorTitulo(Map *showMap) {
+    char tituloBuscado[200];
+    printf("Ingresa el titulo de la pelicula o serie que deseas buscar: ");
+    
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF); // Limpiar buffer
+    
+    fgets(tituloBuscado, sizeof(tituloBuscado), stdin);
+    tituloBuscado[strcspn(tituloBuscado, "\n")] = 0; // Eliminar salto de linea
+
+    // Convertimos el texto del usuario a minusculas antes de buscar
+    lower_case_str(tituloBuscado);
+
+    MapPair *parEncontrado = map_search(showMap, tituloBuscado);
+
+    if (parEncontrado != NULL) {
+        Show *showEncontrado = (Show *)parEncontrado->value;
+        printf("\nShow encontrado:\n");
+        mostrarDetallesShow(showEncontrado);
+    } else {
+        printf("\nLo sentimos, no se encontro ninguna pelicula o serie con ese titulo.\n");
+    }
+}
+
 void limpiarBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
@@ -130,13 +174,38 @@ void esperarEnter() {
 }
 
 int main() {
-    MapshowMap = map_create(is_equal_str, lower_case_str);
+    Map *showMap = map_create(is_equal_str);
     cargarShows(showMap);
 
-    // menu principal
-    // mostrarMenuPrincipal(showMap);
+    int opcion = -1;
+    while (opcion != 0) {
+        mostrarMenuPrincipal();
+        scanf("%d", &opcion);
 
-    printf("Bienvenido a MovieMate.\n");
+        switch (opcion) {
+            case 1:
+                buscarShowPorTitulo(showMap);
+                break;
+            case 2:
+                printf("Funcion no implementada aun.\n");
+                break;
+            case 3:
+                printf("Funcion no implementada aun.\n");
+                break;
+            case 4:
+                printf("Funcion no implementada aun.\n");
+                break;
+            case 5:
+                printf("Funcion no implementada aun.\n");
+                break;
+            case 0:
+                printf("Saliendo de MovieMate... Adios!\n");
+                break;
+            default:
+                printf("Opcion no valida. Por favor, intenta de nuevo.\n");
+        }
+        presioneTeclaParaContinuar();
+    }
 
     // liberar la memoria
     map_destroy(showMap);
