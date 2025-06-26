@@ -211,6 +211,27 @@ void agregarAFavoritos(Show *show, List *favoritesList) {
     printf("\n'%s' ha sido agregado a tus favoritos!\n", show->title);
 }
 
+// Funcion para mostrar la lista de favoritos
+void mostrarFavoritos(List *favoritesList) {
+    printf("\n--- TUS FAVORITOS ---\n");
+
+    // Nos posicionamos al inicio de la lista
+    Show *primerShow = list_first(favoritesList);
+
+    if (primerShow == NULL) {
+        printf("Aun no has agregado nada a tus favoritos.\n");
+    } else {
+        int contador = 1;
+        Show *showActual = primerShow;
+        while (showActual != NULL) {
+            printf("%d. %s\n", contador, showActual->title);
+            // Avanzamos al siguiente elemento de la lista
+            showActual = list_next(favoritesList);
+            contador++;
+        }
+    }
+    printf("----------------------\n");
+}
 
 int main() {
     Map *showMap = map_create(is_equal_str);
