@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <string.h>
+#include "tdas/list.h"
+#include "tdas/map.h"
+#include "tdas/heap.h"
 
 #define MAX_FAVORITOS 100
 #define MAX_COMENTARIOS 100
