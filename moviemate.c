@@ -13,6 +13,17 @@ typedef struct {
     char comentario[TAMANO_TEXTO];
 } Comentario;
 
+typedef struct {
+    char id;
+    int tipo; // 1: Película, 2: Serie
+    char titulo[100];
+    char director[100];
+    char genero[50];
+    char cast;
+    char pais[50];
+    int anio;
+} Contenido;
+
 char favoritos[MAX_FAVORITOS][100];
 int cantidadFavoritos = 0;
 
