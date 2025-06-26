@@ -88,7 +88,7 @@ void cargarShows(Map *showMap) {
         nuevoShow->genres = strdup(get_csv_field(NULL, 10));
         nuevoShow->description = strdup(get_csv_field(NULL, 11));
 
-        // --- Inicializar campos de usuario ---
+        // Inicializar campos de usuario 
         nuevoShow->user_rating = 0;      // Sin calificacion al inicio
         nuevoShow->comments = list_create(); // Creamos una lista vacia para futuros comentarios
         nuevoShow->is_favorite = 0;    // No es favorito al inicio
@@ -106,6 +106,18 @@ void cargarShows(Map *showMap) {
     presioneTeclaParaContinuar(); 
 }
 
+// --- Funcion auxiliar para mostrar los detalles de un Show 
+void mostrarDetallesShow(Show *show) {
+    printf("----------------------------------------\n");
+    printf("Titulo: %s\n", show->title);
+    printf("Tipo: %s\n", show->type);
+    printf("Ano de lanzamiento: %d\n", show->release_year);
+    printf("Director: %s\n", show->director);
+    printf("Elenco: %s\n", show->cast);
+    printf("Generos: %s\n", show->genres);
+    printf("Descripcion: %s\n", show->description);
+    printf("----------------------------------------\n");
+}
 
 void limpiarBuffer() {
     int c;
