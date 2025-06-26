@@ -235,6 +235,10 @@ void mostrarFavoritos(List *favoritesList) {
 
 int main() {
     Map *showMap = map_create(is_equal_str);
+    
+    // --- CREAMOS LA LISTA DE FAVORITOS ---
+    List *favoritesList = list_create();
+
     cargarShows(showMap);
 
     int opcion = -1;
@@ -244,31 +248,22 @@ int main() {
 
         switch (opcion) {
             case 1:
-                buscarShowPorTitulo(showMap);
+                buscarShowPorTitulo(showMap, favoritesList);
                 break;
             case 2:
                 printf("Funcion no implementada aun.\n");
                 break;
             case 3:
-                printf("Funcion no implementada aun.\n");
+                // Llamamos a la nueva funcion para mostrar favoritos
+                mostrarFavoritos(favoritesList);
                 break;
-            case 4:
-                printf("Funcion no implementada aun.\n");
-                break;
-            case 5:
-                printf("Funcion no implementada aun.\n");
-                break;
-            case 0:
-                printf("Saliendo de MovieMate... Adios!\n");
-                break;
-            default:
-                printf("Opcion no valida. Por favor, intenta de nuevo.\n");
+            // opciones aun no implementadas.
         }
-        presioneTeclaParaContinuar();
     }
 
-    // liberar la memoria
     map_destroy(showMap);
+    list_clean(favoritesList); // Asumiendo que list_clean libera la lista
+    // (O la funcion que corresponda para destruir la lista)
 
     return 0;
 }
