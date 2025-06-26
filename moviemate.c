@@ -36,6 +36,16 @@ typedef struct {
     int is_favorite; // 1 si es favorita, 0 si no
 } Show;
 
+void limpiarBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+void esperarEnter() {
+    printf("\nPresiona ENTER para continuar...");
+    limpiarBuffer();
+}
+
 // Funcion para comparar si dos claves (strings) son iguales
 int is_equal_str(void *key1, void *key2) {
     if (strcmp((char *)key1, (char *)key2) == 0) {
@@ -186,15 +196,21 @@ void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
     }
 }
 
-void limpiarBuffer() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
+// Funcion para agregar un show a la lista de favoritos
+void agregarAFavoritos(Show *show, List *favoritesList) {
+    // Verificamos si ya es un favorito usando nuestro flag
+    if (show->is_favorite == 1) {
+        printf("\n'%s' ya esta en tu lista de favoritos.\n", show->title);
+        return;
+    }
+
+    // Si no lo es, lo marcamos y lo agregamos a la lista
+    show->is_favorite = 1;
+    list_pushBack(favoritesList, show); // Usamos la funcion de tu list.h
+
+    printf("\n'%s' ha sido agregado a tus favoritos!\n", show->title);
 }
 
-void esperarEnter() {
-    printf("\nPresiona ENTER para continuar...");
-    limpiarBuffer();
-}
 
 int main() {
     Map *showMap = map_create(is_equal_str);
