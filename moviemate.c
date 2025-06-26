@@ -139,7 +139,7 @@ void mostrarDetallesShow(Show *show) {
     printf("----------------------------------------\n");
 }
 
-void buscarShowPorTitulo(Map *showMap) {
+void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
     char tituloBuscado[200];
     printf("Ingresa el titulo de la pelicula o serie que deseas buscar: ");
     
@@ -147,10 +147,9 @@ void buscarShowPorTitulo(Map *showMap) {
     while ((c = getchar()) != '\n' && c != EOF); // Limpiar buffer
     
     fgets(tituloBuscado, sizeof(tituloBuscado), stdin);
-    tituloBuscado[strcspn(tituloBuscado, "\n")] = 0; // Eliminar salto de linea
+    tituloBuscado[strcspn(tituloBuscado, "\n")] = 0;
 
-    // Convertimos el texto del usuario a minusculas antes de buscar
-    lower_case_str(tituloBuscado);
+    lower_case_str(tituloBuscado); 
 
     MapPair *parEncontrado = map_search(showMap, tituloBuscado);
 
@@ -158,6 +157,30 @@ void buscarShowPorTitulo(Map *showMap) {
         Show *showEncontrado = (Show *)parEncontrado->value;
         printf("\nShow encontrado:\n");
         mostrarDetallesShow(showEncontrado);
+
+        // --- SUBMENU DE ACCIONES ---
+        int opcionDetalle = -1;
+        printf("Que deseas hacer?\n");
+        printf("1. Agregar a Favoritos\n");
+        printf("2. Calificar o Comentar (no implementado aun)\n");
+        printf("3. Volver\n");
+        printf("Selecciona una opcion: ");
+        scanf("%d", &opcionDetalle);
+
+        switch (opcionDetalle) {
+            case 1:
+                // Llamamos a la funcion para agregar a favoritos
+                agregarAFavoritos(showEncontrado, favoritesList);
+                break;
+            case 2:
+                printf("Funcion no implementada aun.\n");
+                break;
+            case 3:
+                break; // Simplemente vuelve
+            default:
+                printf("Opcion no valida.\n");
+        }
+        
     } else {
         printf("\nLo sentimos, no se encontro ninguna pelicula o serie con ese titulo.\n");
     }
