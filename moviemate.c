@@ -3,6 +3,7 @@
 #include "tdas/list.h"
 #include "tdas/map.h"
 #include "tdas/heap.h"
+#include "tdas/extra.h"
 
 #define MAX_FAVORITOS 100
 #define MAX_COMENTARIOS 100
