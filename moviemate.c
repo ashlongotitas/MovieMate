@@ -117,3 +117,17 @@ void esperarEnter() {
     limpiarBuffer();
 }
 
+int main() {
+    MapshowMap = map_create(is_equal_str, lower_case_str);
+    cargarShows(showMap);
+
+    // menu principal
+    // mostrarMenuPrincipal(showMap);
+
+    printf("Bienvenido a MovieMate.\n");
+
+    // liberar la memoria
+    map_destroy(showMap);
+
+    return 0;
+}
