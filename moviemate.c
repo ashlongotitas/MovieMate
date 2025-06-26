@@ -11,22 +11,30 @@
 #define TAMANO_TEXTO 200
 #define MAX_USUARIO 50
 
+// Estructura para un comentario
 typedef struct {
-    char titulo[100];
-    int calificacion;
-    char comentario[TAMANO_TEXTO];
-} Comentario;
+    char *text;
+} Comment;
 
+// Estructura para una película o serie (actualizada)
 typedef struct {
-    char id;
-    int tipo; // 1: Película, 2: Serie
-    char titulo[100];
-    char director[100];
-    char genero[50];
-    char cast;
-    char pais[50];
-    int anio;
-} Contenido;
+    char *id;
+    char *type;
+    char *title;
+    char *director;
+    char *cast;
+    char *country;
+    int release_year;
+    char *rating;
+    char *duration;
+    char *genres; // "listed_in" del CSV
+    char *description;
+
+    // Campos para la interacción del usuario
+    int user_rating;   // Calificación del 1 al 5 (0 si no está calificada)
+    List *comments;    // Lista de comentarios (del tipo Comment)
+    int is_favorite; // 1 si es favorita, 0 si no
+} Show;
 
 char favoritos[MAX_FAVORITOS][100];
 int cantidadFavoritos = 0;
