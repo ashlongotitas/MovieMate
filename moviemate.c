@@ -147,6 +147,7 @@ void cargarShows(Map *showMap) {
     presioneTeclaParaContinuar(); 
 }
 
+/*
 // --- Funcion auxiliar para mostrar los detalles de un Show 
 void mostrarDetallesShow(Show *show) {
     printf("----------------------------------------\n");
@@ -159,7 +160,7 @@ void mostrarDetallesShow(Show *show) {
     printf("Descripcion: %s\n", show->description);
     printf("----------------------------------------\n");
 }
-/*
+
 void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
     char tituloBuscado[200];
     printf("Ingresa el titulo de la pelicula o serie que deseas buscar: ");
@@ -257,9 +258,10 @@ int main() {
     while (opcion != 0) {
         mostrarMenuPrincipal();
         scanf("%d", &opcion);
-
+        /*
         switch (opcion) {
             case 1:
+                printf('Prueba');
                 //buscarShowPorTitulo(showMap, favoritesList);
                 break;
             case 2:
@@ -270,7 +272,9 @@ int main() {
                 //mostrarFavoritos(favoritesList);
                 break;
             // opciones aun no implementadas.
+        
         }
+        */
     }
 
     map_destroy(showMap);
