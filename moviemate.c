@@ -63,15 +63,57 @@ void lower_case_str(char *str) {
     }
 }
 
-const char *get_csv_field(char *linea, int indice) {
-    // Si la linea es NULL, strtok continua en la cadena anterior
-    char *token = strtok(linea, ",");
-    for (int i = 0; i < indice; i++) {
-        token = strtok(NULL, ",");
+const char *get_csv_field(char **linea_ptr, int indice) {
+    char *linea = *linea_ptr;
+    if (linea == NULL || *linea == '\0' || *linea == '\n') {
+        return NULL;
     }
-    // Retorna el campo o NULL si no se encuentra
-    return token;
-}   
+
+    char *campo_buffer = (char*)malloc(2048 * sizeof(char));
+    if (campo_buffer == NULL) return NULL;
+
+    char *ptr_buffer = campo_buffer;
+    int en_comillas = 0;
+
+    if (*linea == '\"') {
+        en_comillas = 1;
+        linea++; // Saltar la comilla inicial
+    }
+
+    while (*linea != '\0') {
+        // Si estamos dentro de comillas
+        if (en_comillas) {
+            // Si encontramos una comilla, puede ser el final o una comilla doble
+            if (*linea == '\"') {
+                if (*(linea + 1) == '\"') { // Es una comilla doble "", la tratamos como un solo caracter "
+                    *ptr_buffer++ = '\"';
+                    linea += 2;
+                } else { // Es la comilla de cierre
+                    en_comillas = 0;
+                    linea++; // Moverse mas alla de la comilla de cierre
+                }
+            } else {
+                *ptr_buffer++ = *linea++;
+            }
+        } else { // Si no estamos en comillas
+            // Si encontramos una coma, es el final del campo
+            if (*linea == ',') {
+                linea++; // Moverse mas alla de la coma para la proxima llamada
+                break;
+            }
+            // Si es un salto de linea, es el final de la linea
+            if (*linea == '\n' || *linea == '\r') {
+                *linea = '\0'; // Terminamos la linea aqui
+                break;
+            }
+            *ptr_buffer++ = *linea++;
+        }
+    }
+
+    *ptr_buffer = '\0';
+    *linea_ptr = linea; // Actualizamos el puntero de la linea original para la proxima llamada
+    return campo_buffer;
+}
 
 void cargarShows(Map *showMap) {
     FILE *archivo = fopen("shows.csv", "r");
@@ -81,60 +123,53 @@ void cargarShows(Map *showMap) {
         return;
     }
 
-    char lineaBuffer[2048]; // Un buffer para leer cada linea
-    fgets(lineaBuffer, sizeof(lineaBuffer), archivo); // Omitimos la primera linea (los encabezados)
+    char lineaBuffer[4096];
+    fgets(lineaBuffer, sizeof(lineaBuffer), archivo); // Omitir cabecera
 
     printf("Cargando peliculas y series...\n");
     int contador = 0;
 
     while (fgets(lineaBuffer, sizeof(lineaBuffer), archivo)) {
-        // strdup crea una copia de la linea para trabajar sobre ella sin
-        // afectar el buffer original. 
-        char *lineaCopiada = strdup(lineaBuffer);
-        if (lineaCopiada == NULL) continue;
+        
+        char *linea_ptr = lineaBuffer;
 
         Show *nuevoShow = (Show *)malloc(sizeof(Show));
-        if (nuevoShow == NULL) {
-            free(lineaCopiada);
-            continue;
-        }
+        if (nuevoShow == NULL) continue;
         
-        // Usamos strdup para asignar memoria propia a cada campo del struct.
-        nuevoShow->id = strdup(get_csv_field(lineaCopiada, 0));
-        nuevoShow->type = strdup(get_csv_field(NULL, 1));
-        nuevoShow->title = strdup(get_csv_field(NULL, 2));
-        nuevoShow->director = strdup(get_csv_field(NULL, 3));
-        nuevoShow->cast = strdup(get_csv_field(NULL, 4));
-        nuevoShow->country = strdup(get_csv_field(NULL, 5));
+        // Pasamos el puntero a la linea y un indice (aunque el indice ya no se usa, lo mantenemos por si acaso)
+        nuevoShow->id = (char*)get_csv_field(&linea_ptr, 0);
+        nuevoShow->type = (char*)get_csv_field(&linea_ptr, 1);
+        nuevoShow->title = (char*)get_csv_field(&linea_ptr, 2);
+        nuevoShow->director = (char*)get_csv_field(&linea_ptr, 3);
+        nuevoShow->cast = (char*)get_csv_field(&linea_ptr, 4);
+        nuevoShow->country = (char*)get_csv_field(&linea_ptr, 5);
         
-        const char *yearStr = get_csv_field(NULL, 7); 
-        nuevoShow->release_year = (yearStr != NULL) ? atoi(yearStr) : 0;
+        free((void*)get_csv_field(&linea_ptr, 6)); // Saltamos y liberamos la memoria de date_added
         
-        nuevoShow->rating = strdup(get_csv_field(NULL, 8));
-        nuevoShow->duration = strdup(get_csv_field(NULL, 9));
-        nuevoShow->genres = strdup(get_csv_field(NULL, 10));
-        nuevoShow->description = strdup(get_csv_field(NULL, 11));
+        char* yearStr = (char*)get_csv_field(&linea_ptr, 7);
+        nuevoShow->release_year = (yearStr != NULL && strlen(yearStr) > 0) ? atoi(yearStr) : 0;
+        free(yearStr);
+        
+        nuevoShow->rating = (char*)get_csv_field(&linea_ptr, 8);
+        nuevoShow->duration = (char*)get_csv_field(&linea_ptr, 9);
+        nuevoShow->genres = (char*)get_csv_field(&linea_ptr, 10);
+        nuevoShow->description = (char*)get_csv_field(&linea_ptr, 11);
 
-        // Inicializar campos de usuario 
-        nuevoShow->user_rating = 0;      // Sin calificacion al inicio
-        nuevoShow->comments = list_create(); // Creamos una lista vacia para futuros comentarios
-        nuevoShow->is_favorite = 0;    // No es favorito al inicio
+        nuevoShow->user_rating = 0;
+        nuevoShow->comments = list_create();
+        nuevoShow->is_favorite = 0;
         
         char *tituloClave = strdup(nuevoShow->title);
         if (tituloClave != NULL) {
-            lower_case_str(tituloClave); // Convertimos la clave a minusculas
-        // Usamos la clave en minusculas para insertar en el mapa
-            map_insert(showMap, tituloClave, nuevoShow); 
+            lower_case_str(tituloClave);
+            map_insert(showMap, tituloClave, nuevoShow);
         }
         contador++;
-        
-        // Liberamos la memoria de la linea copiada
-        free(lineaCopiada);
     }
 
     fclose(archivo);
     printf("%d shows cargados correctamente.\n", contador);
-    presioneTeclaParaContinuar(); 
+    presioneTeclaParaContinuar();
 }
 
 // --- Funcion auxiliar para mostrar los detalles de un Show 
@@ -239,8 +274,8 @@ void mostrarFavoritos(List *favoritesList) {
 void mostrarMenuPrincipal() {
     printf("\n====== MovieMate ======\n");
     printf("Bienvenido");
-    printf("Menú Principal\n");
-    printf("1. Buscar Película/Serie\n");
+    printf("Menu Principal\n");
+    printf("1. Buscar Pelicula/Serie\n");
     printf("2. Ver Comentarios Realizados\n");
     printf("3. Favoritos\n");
     printf("4. Historial de Actividad\n");
