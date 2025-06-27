@@ -169,7 +169,7 @@ void cargarShows(Map *showMap) {
 
     fclose(archivo);
     printf("%d shows cargados correctamente.\n", contador);
-    presioneTeclaParaContinuar();
+    //presioneTeclaParaContinuar();
 }
 
 // --- Funcion auxiliar para mostrar los detalles de un Show 
@@ -273,7 +273,6 @@ void mostrarFavoritos(List *favoritesList) {
 
 void mostrarMenuPrincipal() {
     printf("\n====== MovieMate ======\n");
-    printf("Bienvenido");
     printf("Menu Principal\n");
     printf("1. Buscar Pelicula/Serie\n");
     printf("2. Ver Comentarios Realizados\n");
