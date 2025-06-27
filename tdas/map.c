@@ -54,6 +54,21 @@ void map_insert(Map *map, void *key, void *value) {
   multimap_insert(map, key, value);
 }
 
+void map_destroy(Map *map) {
+    if (map == NULL) return;
+    
+    MapPair *pair = map_first(map);
+    while (pair != NULL) {
+        free(pair->key);  // Liberamos la clave (título en minúsculas)
+        free(pair);       // Liberamos el par
+        pair = map_next(map);
+    }
+    
+    list_clean(map->ls);
+    free(map->ls);
+    free(map);
+}
+
 int _is_equal(Map *map, MapPair *pair, void *key) {
   return ((map->is_equal && map->is_equal(pair->key, key)) ||
           (map->lower_than && !map->lower_than(pair->key, key) &&
@@ -78,6 +93,8 @@ MapPair *map_search(Map *map, void *key) {
   }
   return NULL;
 }
+
+
 
 MapPair *map_first(Map *map) { return list_first(map->ls); }
 

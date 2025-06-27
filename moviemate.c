@@ -12,6 +12,16 @@
 #define TAMANO_TEXTO 200
 #define MAX_USUARIO 50
 
+void mostrarMenuPrincipal() {
+    printf("\n=== MOVIEMATE ===\n");
+    printf("1. Buscar por título\n");
+    printf("2. Buscar por género\n");
+    printf("3. Ver favoritos\n");
+    printf("4. Ver recomendaciones\n");
+    printf("0. Salir\n");
+    printf("Seleccione: ");
+}
+
 // Estructura para un comentario
 typedef struct {
     char *text;
@@ -150,21 +160,6 @@ void mostrarDetallesShow(Show *show) {
     printf("----------------------------------------\n");
 }
 
-// Funcion para agregar un show a la lista de favoritos
-void agregarAFavoritos(Show *show, List *favoritesList) {
-    // Verificamos si ya es un favorito usando nuestro flag
-    if (show->is_favorite == 1) {
-        printf("\n'%s' ya esta en tu lista de favoritos.\n", show->title);
-        return;
-    }
-
-    // Si no lo es, lo marcamos y lo agregamos a la lista
-    show->is_favorite = 1;
-    list_pushBack(favoritesList, show); // Usamos la funcion de tu list.h
-
-    printf("\n'%s' ha sido agregado a tus favoritos!\n", show->title);
-}
-
 void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
     char tituloBuscado[200];
     printf("Ingresa el titulo de la pelicula o serie que deseas buscar: ");
@@ -214,6 +209,7 @@ void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
 
 
 
+
 // Funcion para mostrar la lista de favoritos
 void mostrarFavoritos(List *favoritesList) {
     printf("\n--- TUS FAVORITOS ---\n");
@@ -249,6 +245,7 @@ void mostrarMenuPrincipal() {
     printf("0. Salir\n");
 }
 
+
 int main() {
     Map *showMap = map_create(is_equal_str);
     
@@ -264,14 +261,14 @@ int main() {
 
         switch (opcion) {
             case 1:
-                buscarShowPorTitulo(showMap, favoritesList);
+                //buscarShowPorTitulo(showMap, favoritesList);
                 break;
             case 2:
-                printf("Funcion no implementada aun.\n");
+                //printf("Funcion no implementada aun.\n");
                 break;
             case 3:
                 // Llamamos a la nueva funcion para mostrar favoritos
-                mostrarFavoritos(favoritesList);
+                //mostrarFavoritos(favoritesList);
                 break;
             // opciones aun no implementadas.
         }

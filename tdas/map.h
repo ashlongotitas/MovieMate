@@ -25,6 +25,8 @@ MapPair *map_first(Map *map);
 
 MapPair *map_next(Map *map);
 
+void map_destroy(Map *map);
+
 void map_clean(Map *map);
 
 #endif /* MAP_H */
