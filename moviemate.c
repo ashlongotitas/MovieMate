@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "tdas/list.h"
 #include "tdas/map.h"
 #include "tdas/heap.h"
@@ -149,6 +150,21 @@ void mostrarDetallesShow(Show *show) {
     printf("----------------------------------------\n");
 }
 
+// Funcion para agregar un show a la lista de favoritos
+void agregarAFavoritos(Show *show, List *favoritesList) {
+    // Verificamos si ya es un favorito usando nuestro flag
+    if (show->is_favorite == 1) {
+        printf("\n'%s' ya esta en tu lista de favoritos.\n", show->title);
+        return;
+    }
+
+    // Si no lo es, lo marcamos y lo agregamos a la lista
+    show->is_favorite = 1;
+    list_pushBack(favoritesList, show); // Usamos la funcion de tu list.h
+
+    printf("\n'%s' ha sido agregado a tus favoritos!\n", show->title);
+}
+
 void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
     char tituloBuscado[200];
     printf("Ingresa el titulo de la pelicula o serie que deseas buscar: ");
@@ -196,20 +212,7 @@ void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
     }
 }
 
-// Funcion para agregar un show a la lista de favoritos
-void agregarAFavoritos(Show *show, List *favoritesList) {
-    // Verificamos si ya es un favorito usando nuestro flag
-    if (show->is_favorite == 1) {
-        printf("\n'%s' ya esta en tu lista de favoritos.\n", show->title);
-        return;
-    }
 
-    // Si no lo es, lo marcamos y lo agregamos a la lista
-    show->is_favorite = 1;
-    list_pushBack(favoritesList, show); // Usamos la funcion de tu list.h
-
-    printf("\n'%s' ha sido agregado a tus favoritos!\n", show->title);
-}
 
 // Funcion para mostrar la lista de favoritos
 void mostrarFavoritos(List *favoritesList) {
@@ -231,6 +234,19 @@ void mostrarFavoritos(List *favoritesList) {
         }
     }
     printf("----------------------\n");
+}
+
+void mostrarMenuPrincipal() {
+    printf("\n====== MovieMate ======\n");
+    printf("Bienvenido");
+    printf("Menú Principal\n");
+    printf("1. Buscar Película/Serie\n");
+    printf("2. Ver Comentarios Realizados\n");
+    printf("3. Favoritos\n");
+    printf("4. Historial de Actividad\n");
+    printf("5. Recomendaciones\n");
+    printf("6. Configuración\n");
+    printf("0. Salir\n");
 }
 
 int main() {
@@ -261,7 +277,7 @@ int main() {
         }
     }
 
-    map_destroy(showMap);
+    map_clean(showMap);
     list_clean(favoritesList); // Asumiendo que list_clean libera la lista
     // (O la funcion que corresponda para destruir la lista)
 
