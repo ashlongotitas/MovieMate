@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "tdas/list.h"
 #include "tdas/map.h"
 #include "tdas/heap.h"
@@ -10,6 +11,16 @@
 #define MAX_HISTORIAL 200
 #define TAMANO_TEXTO 200
 #define MAX_USUARIO 50
+
+void mostrarMenuPrincipal() {
+    printf("\n=== MOVIEMATE ===\n");
+    printf("1. Buscar por título\n");
+    printf("2. Buscar por género\n");
+    printf("3. Ver favoritos\n");
+    printf("4. Ver recomendaciones\n");
+    printf("0. Salir\n");
+    printf("Seleccione: ");
+}
 
 // Estructura para un comentario
 typedef struct {
@@ -148,7 +159,7 @@ void mostrarDetallesShow(Show *show) {
     printf("Descripcion: %s\n", show->description);
     printf("----------------------------------------\n");
 }
-
+/*
 void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
     char tituloBuscado[200];
     printf("Ingresa el titulo de la pelicula o serie que deseas buscar: ");
@@ -211,6 +222,7 @@ void agregarAFavoritos(Show *show, List *favoritesList) {
     printf("\n'%s' ha sido agregado a tus favoritos!\n", show->title);
 }
 
+
 // Funcion para mostrar la lista de favoritos
 void mostrarFavoritos(List *favoritesList) {
     printf("\n--- TUS FAVORITOS ---\n");
@@ -232,7 +244,7 @@ void mostrarFavoritos(List *favoritesList) {
     }
     printf("----------------------\n");
 }
-
+*/
 int main() {
     Map *showMap = map_create(is_equal_str);
     
@@ -248,14 +260,14 @@ int main() {
 
         switch (opcion) {
             case 1:
-                buscarShowPorTitulo(showMap, favoritesList);
+                //buscarShowPorTitulo(showMap, favoritesList);
                 break;
             case 2:
-                printf("Funcion no implementada aun.\n");
+                //printf("Funcion no implementada aun.\n");
                 break;
             case 3:
                 // Llamamos a la nueva funcion para mostrar favoritos
-                mostrarFavoritos(favoritesList);
+                //mostrarFavoritos(favoritesList);
                 break;
             // opciones aun no implementadas.
         }
