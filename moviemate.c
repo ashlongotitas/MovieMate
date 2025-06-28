@@ -420,11 +420,8 @@ void recomendarPersonalizado(Map *showMap, List *favoritesList) {
 
     Map *generosFavoritos = map_create(is_equal_str);
     
-    // 1. Analizar shows favoritos
     Show *showFavorito = list_first(favoritesList);
     while (showFavorito != NULL) {
-        // Suponemos que los generos vienen en un string "Drama, Comedy, Action"
-        // y los separamos por comas.
         char *generosCopia = strdup(showFavorito->genres);
         char *token = strtok(generosCopia, ",");
         while (token != NULL) {
@@ -448,7 +445,6 @@ void recomendarPersonalizado(Map *showMap, List *favoritesList) {
         showFavorito = list_next(favoritesList);
     }
     
-    // (Opcional: puedes hacer lo mismo con shows calificados con 4 o 5 estrellas)
 
     if (map_first(generosFavoritos) == NULL) {
         printf("No tenemos suficientes datos para darte una recomendacion personalizada.\n");
@@ -501,7 +497,7 @@ void mostrarMenuPrincipal() {
     printf("3. Favoritos\n");
     printf("4. Shows Calificados\n");
     printf("5. Recomendaciones\n");
-    printf("6. Configuración\n");
+    printf("6. Configuracion\n");
     printf("0. Salir\n");
 }
 
