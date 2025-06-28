@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <time.h>
 #include "tdas/list.h"
 #include "tdas/map.h"
 #include "tdas/heap.h"
@@ -340,7 +342,7 @@ void mostrarFavoritos(List *favoritesList) {
     printf("----------------------\n");
 }
 
-void mostrarHistorial(Map *showMap) {
+void mostrarShowsCalificados(Map *showMap) {
     printf("\n--- TU HISTORIAL DE ACTIVIDAD ---\n");
     int encontrado = 0; // Un flag para saber si encontramos algo
 
@@ -379,6 +381,41 @@ void mostrarHistorial(Map *showMap) {
     printf("\n----------------------------------------\n");
 }
 
+void recomendarAleatorio(Map *showMap) {
+    printf("\n--- RECOMENDACION ALEATORIA ---\n");
+
+    // Contamos el total de shows en el mapa
+    int totalShows = 0;
+    MapPair *parContador = map_first(showMap);
+    while (parContador != NULL) {
+        totalShows++;
+        parContador = map_next(showMap);
+    }
+
+    if (totalShows == 0) {
+        printf("No hay shows cargados en la base de datos.\n");
+        return;
+    }
+
+    // Inicializamos la semilla del generador de numeros aleatorios
+    srand(time(NULL));
+    int indiceAleatorio = rand() % totalShows;
+
+    // Recorremos el mapa hasta llegar al indice aleatorio
+    int i = 0;
+    MapPair *par = map_first(showMap);
+    while (i < indiceAleatorio) {
+        par = map_next(showMap);
+        i++;
+    }
+
+    // Mostramos la recomendacion
+    Show *showRecomendado = (Show *)par->value;
+    printf("Te recomendamos ver:\n");
+    mostrarDetallesShow(showRecomendado);
+}
+
+
 void mostrarMenuPrincipal() {
     printf("\n====== MovieMate ======\n");
     printf("Menu Principal\n");
@@ -415,10 +452,10 @@ int main() {
                 mostrarFavoritos(favoritesList);
                 break;
             case 4:
-                mostrarHistorial(showMap);
+                mostrarShowsCalificados(showMap);
                 break;
             case 5:
-                //recomendaciones
+                recomendarAleatorio(showMap);
                 break;
             // opciones aun no implementadas.
         }
