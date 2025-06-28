@@ -497,7 +497,6 @@ void mostrarMenuPrincipal() {
     printf("3. Favoritos\n");
     printf("4. Shows Calificados\n");
     printf("5. Recomendaciones\n");
-    printf("6. Configuracion\n");
     printf("0. Salir\n");
 }
 
