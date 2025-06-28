@@ -415,6 +415,83 @@ void recomendarAleatorio(Map *showMap) {
     mostrarDetallesShow(showRecomendado);
 }
 
+void recomendarPersonalizado(Map *showMap, List *favoritesList) {
+    printf("\n--- RECOMENDACIONES PARA TI ---\n");
+
+    Map *generosFavoritos = map_create(is_equal_str);
+    
+    // 1. Analizar shows favoritos
+    Show *showFavorito = list_first(favoritesList);
+    while (showFavorito != NULL) {
+        // Suponemos que los generos vienen en un string "Drama, Comedy, Action"
+        // y los separamos por comas.
+        char *generosCopia = strdup(showFavorito->genres);
+        char *token = strtok(generosCopia, ",");
+        while (token != NULL) {
+            // Eliminamos espacios en blanco al inicio
+            while(isspace(*token)) token++;
+            
+            MapPair *parGenero = map_search(generosFavoritos, token);
+            if(parGenero == NULL) {
+                // Si el genero no esta en nuestro mapa, lo agregamos con contador 1
+                int *contador = malloc(sizeof(int));
+                *contador = 1;
+                map_insert(generosFavoritos, strdup(token), contador);
+            } else {
+                // Si ya existe, incrementamos su contador
+                int *contador = (int *)parGenero->value;
+                (*contador)++;
+            }
+            token = strtok(NULL, ",");
+        }
+        free(generosCopia);
+        showFavorito = list_next(favoritesList);
+    }
+    
+    // (Opcional: puedes hacer lo mismo con shows calificados con 4 o 5 estrellas)
+
+    if (map_first(generosFavoritos) == NULL) {
+        printf("No tenemos suficientes datos para darte una recomendacion personalizada.\n");
+        printf("Prueba a anadir mas shows a tus favoritos!\n");
+        map_clean(generosFavoritos);
+        return;
+    }
+
+    // 2. Buscar recomendaciones
+    printf("Porque te gustan tus generos preferidos, te recomendamos:\n\n");
+    int recomendacionesHechas = 0;
+    MapPair *parShow = map_first(showMap);
+    while (parShow != NULL && recomendacionesHechas < 5) { // Mostramos hasta 5
+        Show *showPotencial = (Show *)parShow->value;
+
+        // Solo recomendamos shows que el usuario no ha calificado ni marcado como favorito
+        if (showPotencial->user_rating == 0 && !showPotencial->is_favorite) {
+            char *generosCopia = strdup(showPotencial->genres);
+            char *token = strtok(generosCopia, ",");
+            while (token != NULL) {
+                while(isspace(*token)) token++;
+                
+                // Si el genero del show potencial esta en nuestros generos favoritos
+                if (map_search(generosFavoritos, token) != NULL) {
+                    mostrarDetallesShow(showPotencial);
+                    recomendacionesHechas++;
+                    // Para no recomendar el mismo show dos veces si tiene varios generos en comun
+                    break; 
+                }
+                token = strtok(NULL, ",");
+            }
+            free(generosCopia);
+        }
+        parShow = map_next(showMap);
+    }
+
+    if (recomendacionesHechas == 0) {
+        printf("No hemos encontrado nuevas recomendaciones por ahora. Vuelve a intentarlo mas tarde!\n");
+    }
+    
+    map_clean(generosFavoritos);
+}
+
 
 void mostrarMenuPrincipal() {
     printf("\n====== MovieMate ======\n");
@@ -454,10 +531,28 @@ int main() {
             case 4:
                 mostrarShowsCalificados(showMap);
                 break;
-            case 5:
-                recomendarAleatorio(showMap);
+            case 5: { 
+                int opcionRecomendacion = -1;
+                printf("\n--- TIPO DE RECOMENDACION ---\n");
+                printf("1. Recomendacion personalizada\n");
+                printf("2. Recomendacion aleatoria\n");
+                printf("0. Volver\n");
+                printf("Selecciona una opcion: ");
+                scanf("%d", &opcionRecomendacion);
+
+                switch (opcionRecomendacion) {
+                    case 1:
+                        recomendarPersonalizado(showMap, favoritesList);
+                        break;
+                    case 2:
+                        recomendarAleatorio(showMap);
+                        break;
+                    default:
+                        break;
+                }
                 break;
-            // opciones aun no implementadas.
+            }
+                break;
         }
     }
 
