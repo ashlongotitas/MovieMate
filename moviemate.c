@@ -260,7 +260,7 @@ void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
         printf("1. Agregar a Favoritos\n");
         printf("2. Calificar\n");
         printf("3. Comentar\n");
-        printf("3. Volver\n");
+        printf("4. Volver\n");
         printf("Selecciona una opcion: ");
         scanf("%d", &opcionDetalle);
 
@@ -285,7 +285,40 @@ void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
     }
 }
 
-// Funcion para mostrar la lista de favoritos
+// Funcion para mostrar unicamente los comentarios realizados por el usuario
+void mostrarComentarios(Map *showMap) {
+    printf("\n--- TUS COMENTARIOS REALIZADOS ---\n");
+    int comentariosEncontrados = 0;
+
+    // Recorremos todo el mapa para buscar shows con comentarios
+    MapPair *par = map_first(showMap);
+    while (par != NULL) {
+        Show *showActual = (Show *)par->value;
+        Comment *comentario = list_first(showActual->comments);
+
+        // Si el show tiene al menos un comentario, lo mostramos
+        if (comentario != NULL) {
+            if (!comentariosEncontrados) {
+                // Solo imprimimos la primera vez que encontramos un comentario
+                comentariosEncontrados = 1;
+            }
+            printf("\nEn '%s':\n", showActual->title);
+
+            // Recorremos y mostramos todos los comentarios de este show
+            while (comentario != NULL) {
+                printf(" - \"%s\"\n", comentario->text);
+                comentario = list_next(showActual->comments);
+            }
+        }
+        par = map_next(showMap);
+    }
+
+    if (!comentariosEncontrados) {
+        printf("Aun no has escrito ningun comentario.\n");
+    }
+    printf("----------------------------------\n");
+}
+
 void mostrarFavoritos(List *favoritesList) {
     printf("\n--- TUS FAVORITOS ---\n");
 
@@ -307,13 +340,52 @@ void mostrarFavoritos(List *favoritesList) {
     printf("----------------------\n");
 }
 
+void mostrarHistorial(Map *showMap) {
+    printf("\n--- TU HISTORIAL DE ACTIVIDAD ---\n");
+    int encontrado = 0; // Un flag para saber si encontramos algo
+
+    // Usamos map_first y map_next para recorrer todos los elementos del mapa
+    MapPair *par = map_first(showMap);
+    while (par != NULL) {
+        Show *showActual = (Show *)par->value;
+
+        // Verificamos si el show tiene calificacion o comentarios
+        if (showActual->user_rating > 0 || list_first(showActual->comments) != NULL) {
+            encontrado = 1;
+            printf("\n----------------------------------------\n");
+            printf("Titulo: %s\n", showActual->title);
+            
+            // Mostramos la calificacion si existe
+            if (showActual->user_rating > 0) {
+                printf("Tu calificacion: %d/5\n", showActual->user_rating);
+            }
+
+            // Mostramos los comentarios si existen
+            Comment *comentario = list_first(showActual->comments);
+            if (comentario != NULL) {
+                printf("Tus comentarios:\n");
+                while (comentario != NULL) {
+                    printf(" - \"%s\"\n", comentario->text);
+                    comentario = list_next(showActual->comments);
+                }
+            }
+        }
+        par = map_next(showMap);
+    }
+
+    if (!encontrado) {
+        printf("Aun no has calificado o comentado ningun show.\n");
+    }
+    printf("\n----------------------------------------\n");
+}
+
 void mostrarMenuPrincipal() {
     printf("\n====== MovieMate ======\n");
     printf("Menu Principal\n");
     printf("1. Buscar Pelicula/Serie\n");
     printf("2. Ver Comentarios Realizados\n");
     printf("3. Favoritos\n");
-    printf("4. Historial de Actividad\n");
+    printf("4. Shows Calificados\n");
     printf("5. Recomendaciones\n");
     printf("6. Configuración\n");
     printf("0. Salir\n");
@@ -337,11 +409,16 @@ int main() {
                 buscarShowPorTitulo(showMap, favoritesList);
                 break;
             case 2:
-                printf("Funcion no implementada aun.\n");
+                mostrarComentarios(showMap);
                 break;
             case 3:
-                // Llamamos a la nueva funcion para mostrar favoritos
                 mostrarFavoritos(favoritesList);
+                break;
+            case 4:
+                mostrarHistorial(showMap);
+                break;
+            case 5:
+                //recomendaciones
                 break;
             // opciones aun no implementadas.
         }
