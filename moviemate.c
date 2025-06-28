@@ -200,6 +200,41 @@ void agregarAFavoritos(Show *show, List *favoritesList) {
     printf("\n'%s' ha sido agregado a tus favoritos!\n", show->title);
 }
 
+void calificarShow(Show *show) {
+    int calificacion = 0;
+    printf("\nIngresa tu calificacion para '%s' (1-5): ", show->title);
+    scanf("%d", &calificacion);
+
+    if (calificacion >= 1 && calificacion <= 5) {
+        show->user_rating = calificacion;
+        printf("Calificacion guardada con exito!\n");
+    } else {
+        printf("Calificacion no valida. Debe ser un numero entre 1 y 5.\n");
+    }
+}
+
+void comentarShow(Show *show) {
+    char textoComentario[1000];
+    printf("\nEscribe tu comentario para '%s': ", show->title);
+
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+
+    fgets(textoComentario, sizeof(textoComentario), stdin);
+    textoComentario[strcspn(textoComentario, "\n")] = 0;
+
+    Comment *nuevoComentario = (Comment *)malloc(sizeof(Comment));
+    if (nuevoComentario == NULL) {
+        printf("Error de memoria. No se pudo guardar el comentario.\n");
+        return;
+    }
+    
+    nuevoComentario->text = strdup(textoComentario);
+    list_pushBack(show->comments, nuevoComentario);
+
+    printf("Comentario guardado con exito!\n");
+}
+
 void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
     char tituloBuscado[200];
     printf("Ingresa el titulo de la pelicula o serie que deseas buscar: ");
@@ -223,7 +258,8 @@ void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
         int opcionDetalle = -1;
         printf("Que deseas hacer?\n");
         printf("1. Agregar a Favoritos\n");
-        printf("2. Calificar o Comentar (no implementado aun)\n");
+        printf("2. Calificar\n");
+        printf("3. Comentar\n");
         printf("3. Volver\n");
         printf("Selecciona una opcion: ");
         scanf("%d", &opcionDetalle);
@@ -234,10 +270,12 @@ void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
                 agregarAFavoritos(showEncontrado, favoritesList);
                 break;
             case 2:
-                printf("Funcion no implementada aun.\n");
+                // Llamamos a la funcion para calificar
+                calificarShow(showEncontrado);
                 break;
             case 3:
-                break; // Simplemente vuelve
+                comentarShow(showEncontrado);
+                break;
             default:
                 printf("Opcion no valida.\n");
         }
@@ -246,8 +284,6 @@ void buscarShowPorTitulo(Map *showMap, List *favoritesList) {
         printf("\nLo sentimos, no se encontro ninguna pelicula o serie con ese titulo.\n");
     }
 }
-
-
 
 // Funcion para mostrar la lista de favoritos
 void mostrarFavoritos(List *favoritesList) {
